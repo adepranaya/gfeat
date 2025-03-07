@@ -1,30 +1,57 @@
+#!/usr/bin/env node
 import fs from 'fs-extra';
 import path from 'path';
 import fg from 'fast-glob';
 import { checkbox, input } from '@inquirer/prompts';
+import { pathToFileURL } from 'url';
+
+// Global Variable
+let pascalFeature = '';
+let kebabFeature = '';
+let camelFeature = '';
 
 // Helper functions for case conversions
-const toPascalCase = (str) => str.replace(/(?:^|[-_])(\w)/g, (_, c) => c.toUpperCase());
-const toKebabCase = (str) => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-const toCamelCase = (str) => str.replace(/(?:[-_])([a-z])/g, (_, c) => c.toUpperCase()).replace(/^([A-Z])/, (_, c) => c.toLowerCase());
+const toPascalCase = (str) =>
+  str.replace(/(?:^|[-_])(\w)/g, (_, c) => c.toUpperCase());
 
+const toKebabCase = (str) =>
+  str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 
-// Cari file config dari proyek pengguna
-function loadUserConfig() {
-  const configPaths = [
-    path.resolve(process.cwd(), 'gfeat.config.js'), // Cek di root proyek
+const toCamelCase = (str) =>
+  str
+    .replace(/(?:[-_])([a-z])/g, (_, c) => c.toUpperCase())
+    .replace(/^([A-Z])/, (_, c) => c.toLowerCase());
+
+// Search file config from current project
+async function loadUserConfig() {
+  const configFiles = [
+    'gfeat.config.js',
+    'gfeat.config.ts',
+    'gfeat.config.mjs',
+    'gfeat.config.cjs',
   ];
 
-  for (const configPath of configPaths) {
+  for (const file of configFiles) {
+    const configPath = path.resolve(process.cwd(), file);
+
     if (fs.existsSync(configPath)) {
-      return import(configPath);
+      let config;
+      if (file.endsWith('.cjs')) {
+        config = require(configPath); // Gunakan require untuk CommonJS
+      } else {
+        config = await import(pathToFileURL(configPath).href); // Gunakan import untuk ESModule
+      }
+      return config.default ?? config;
     }
   }
 
-  console.error('Config file not found! Please create `gfeat.config.js` in your project.');
+  console.error(
+    'Config file not found! Please create `gfeat.config.js`, `.ts`, `.mjs`, or `.cjs` in your project.'
+  );
   process.exit(1);
 }
 const config = await loadUserConfig();
+const replaceStr = config?.replaceStr || 'BaseFeat';
 
 async function getFeatureName() {
   try {
@@ -40,8 +67,9 @@ async function getFeatureName() {
 
 async function getSelectedTemplates() {
   try {
+    console.log(config);
     return await checkbox({
-      message: 'Pilih template:',
+      message: 'Choose templates:',
       choices: config.templates.map((t) => ({ name: t.name, value: t })),
     });
   } catch (error) {
@@ -53,34 +81,32 @@ async function getSelectedTemplates() {
   }
 }
 
-function generateFileName(file, pascalFeature, kebabFeature, camelFeature) {
-  return file
-    .replace('BasicComp', pascalFeature)
-    .replace('basic-comp', kebabFeature)
-    .replace('basicComp', camelFeature);
+// change text to feature name
+function replaceAllCases(text) {
+  return text
+    .replace(new RegExp(replaceStr, 'g'), pascalFeature)
+    .replace(new RegExp(toKebabCase(replaceStr), 'g'), kebabFeature)
+    .replace(new RegExp(toCamelCase(replaceStr), 'g'), camelFeature);
 }
 
-function replaceContent(content, pascalFeature, kebabFeature, camelFeature) {
-  return content
-    .replace(/BasicComp/g, pascalFeature)
-    .replace(/basic-comp/g, `${kebabFeature}`)
-    .replace(/basicComp/g, `${camelFeature}`);
-}
-
-async function processTemplate(templateType, pascalFeature, kebabFeature, camelFeature) {
+async function processTemplate(templateType) {
   for (const srcPath of templateType.src) {
     const files = await fg(path.resolve(srcPath));
     for (const srcFilePath of files) {
       const file = path.basename(srcFilePath);
-      const fileName = generateFileName(file, pascalFeature, kebabFeature, camelFeature);
-      
+      const fileName = replaceAllCases(file);
+
       for (const target of templateType.target) {
-        const targetDir = target.replace('$PARAM', pascalFeature);
+        const targetDir = target
+          .replace('$PASCAL_FEAT', pascalFeature)
+          .replace('$KEBAB_FEAT', kebabFeature)
+          .replace('$CAMEL_FEAT', camelFeature);
+
         const targetFilePath = path.join(targetDir, fileName);
 
         await fs.ensureDir(targetDir);
         let content = await fs.readFile(srcFilePath, 'utf8');
-        content = replaceContent(content, pascalFeature, kebabFeature, camelFeature);
+        content = replaceAllCases(content);
 
         await fs.writeFile(targetFilePath, content);
         console.log(`File created: ${targetFilePath}`);
@@ -94,12 +120,12 @@ async function main() {
     const featureName = await getFeatureName();
     const selectedTemplates = await getSelectedTemplates();
 
-    const pascalFeature = toPascalCase(featureName);
-    const kebabFeature = toKebabCase(featureName);
-    const camelFeature = toCamelCase(featureName);
+    pascalFeature = toPascalCase(featureName);
+    kebabFeature = toKebabCase(featureName);
+    camelFeature = toCamelCase(featureName);
 
     for (const templateType of selectedTemplates) {
-      await processTemplate(templateType, pascalFeature, kebabFeature, camelFeature);
+      await processTemplate(templateType);
     }
   } catch (error) {
     console.error('An error occurred:', error.message);
