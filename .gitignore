@@ -1,1 +1,29 @@
 /.vscode
+/node_modules
+/package-lock.json
+.DS_Store
+
+# Logs
+build
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+pids
+logs
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Environment variables
+.env*

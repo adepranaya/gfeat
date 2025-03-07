@@ -1,12 +1,33 @@
 {
-  "name": "gfeat",
+  "name": "@adepranaya/gfeat",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adepranaya/gfeat.git"
+  },
+  "keywords": [
+    "cli",
+    "feature generator",
+    "multi file generator"
+  ],
   "author": "Ade Pranaya <adepranaya@gmail.com> (https://adepranaya.com)",
   "license": "ISC",
-  "description": ""
+  "description": "generate feat from your templates",
+  "bugs": {
+    "url": "https://github.com/adepranaya/gfeat/issues"
+  },
+  "homepage": "https://github.com/adepranaya/gfeat#readme",
+  "dependencies": {
+    "@inquirer/prompts": "^7.3.2",
+    "fast-glob": "^3.3.3",
+    "fs-extra": "^11.3.0"
+  },
+  "bin": {
+    "gfeat": "./index.js"
+  }
 }
