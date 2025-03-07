@@ -67,7 +67,6 @@ async function getFeatureName() {
 
 async function getSelectedTemplates() {
   try {
-    console.log(config);
     return await checkbox({
       message: 'Choose templates:',
       choices: config.templates.map((t) => ({ name: t.name, value: t })),
