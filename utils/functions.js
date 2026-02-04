@@ -39,6 +39,7 @@ export async function getFeatureName() {
     if (error.isTtyError || error.message.includes('User force closed')) {
       console.log('\nProcess interrupted by user. Exiting...');
       process.exit(0);
+      return;
     }
     throw error;
   }
@@ -54,6 +55,7 @@ export async function getSelectedTemplates(templates) {
     if (error.isTtyError || error.message.includes('User force closed')) {
       console.log('\nProcess interrupted by user. Exiting...');
       process.exit(0);
+      return;
     }
     throw error;
   }
