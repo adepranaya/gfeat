@@ -4,7 +4,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "release": "standard-version --skip.tag"
   },
   "repository": {
     "type": "git",
@@ -29,5 +30,8 @@
   },
   "bin": {
     "gfeat": "index.js"
+  },
+  "devDependencies": {
+    "standard-version": "^9.5.0"
   }
 }

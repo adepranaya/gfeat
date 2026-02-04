@@ -1,0 +1,23 @@
+# GitHub workflows
+.github/
+
+# Tests
+test/
+
+# Local configuration
+gfeat.config.js
+.vscode/
+
+# Git metadata
+.gitignore
+
+# OS files
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies and locks
+node_modules/
+package-lock.json
