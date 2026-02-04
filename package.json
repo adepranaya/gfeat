@@ -1,6 +1,6 @@
 {
   "name": "@adepranaya/gfeat",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
