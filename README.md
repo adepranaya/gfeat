@@ -12,8 +12,13 @@
 
 ## 📦 Installation
 
+You can install `@adepranaya/gfeat` globally using npm:
 ```sh
 npm install -g @adepranaya/gfeat
+```
+Or locally using npm:
+```sh
+npm install @adepranaya/gfeat --save-dev
 ```
 
 ## 🛠️ Usage
@@ -21,6 +26,10 @@ npm install -g @adepranaya/gfeat
 1. Run the following command in your terminal:
    ```sh
    gfeat
+   ```
+   or if installed locally:
+   ```sh
+   npx gfeat
    ```
 2. Enter the **feature name** you want to create.
 3. Select the **template** to use.
