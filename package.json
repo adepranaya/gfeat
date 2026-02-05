@@ -1,11 +1,11 @@
 {
   "name": "@adepranaya/gfeat",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "release": "standard-version --skip.tag"
+    "release": "standard-version"
   },
   "repository": {
     "type": "git",
