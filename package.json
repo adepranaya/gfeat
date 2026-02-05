@@ -29,7 +29,7 @@
     "fs-extra": "^11.3.0"
   },
   "bin": {
-    "gfeat": "index.js"
+    "gfeat": "bin/gfeat.js"
   },
   "devDependencies": {
     "esmock": "^2.7.3",

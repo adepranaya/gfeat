@@ -1,8 +1,6 @@
-#!/usr/bin/env node
 import fs from 'fs-extra';
 import path from 'path';
 import fg from 'fast-glob';
-import { pathToFileURL } from 'url';
 
 import {
   toCamelCase,
@@ -39,6 +37,15 @@ export async function main() {
         .replace(new RegExp(toSnakeCase(replaceStr), 'g'), snakeFeature);
     }
 
+    // replace target directory variables
+    function replaceTargetVariables(target) {
+      return target
+        .split('$PASCAL_FEAT').join(pascalFeature)
+        .split('$KEBAB_FEAT').join(kebabFeature)
+        .split('$CAMEL_FEAT').join(camelFeature)
+        .split('$SNAKE_FEAT').join(snakeFeature);
+    }
+
     async function processTemplate(templateType) {
       for (const srcPath of templateType.src) {
         const files = await fg(path.resolve(srcPath));
@@ -48,11 +55,7 @@ export async function main() {
           const fileName = replaceAllCases(file);
 
           for (const target of templateType.target) {
-            const targetDir = target
-              .replace('$PASCAL_FEAT', pascalFeature)
-              .replace('$KEBAB_FEAT', kebabFeature)
-              .replace('$CAMEL_FEAT', camelFeature)
-              .replace('$SNAKE_FEAT', snakeFeature);
+            const targetDir = replaceTargetVariables(target);
 
             const targetFilePath = path.join(targetDir, fileName);
 
@@ -76,6 +79,3 @@ export async function main() {
   }
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main().catch(console.error);
-}
