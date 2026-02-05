@@ -84,6 +84,7 @@ module.exports = {
   - `$PASCAL_FEAT` (ex: UserProfile),
   - `$KEBAB_FEAT` (ex: user-profile),
   - `$CAMEL_FEAT` (ex: userProfile)
+  - `$SNAKE_FEAT` (ex: user_profile)
 
 ## 📄 Example Templates
 
